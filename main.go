@@ -43,13 +43,13 @@ func main() {
 		draw.Draw(canvas, r, frame, fb.Min, draw.Over)
 
 		x++
-		if x > perRow {
+		if x >= perRow {
 			y++
 			x = 0
 		}
 	}
 
-	out, err := os.Create("OUT.png")
+	out, err := os.Create(*outFile)
 	panicerr(err)
 	panicerr(png.Encode(out, canvas))
 }
