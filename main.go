@@ -1,13 +1,12 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"image"
 	"image/draw"
 	"image/gif"
 	"image/png"
-
-	"flag"
-	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -19,12 +18,13 @@ const perRow = 8
 var outFile = flag.String("out", "out.png", "png file to write sprite sheet")
 
 func main() {
-	if len(os.Args) < 2 {
+	flag.Parse()
+	if len(flag.Args()) < 1 {
 		fmt.Println("SPRITE STITCHER\nUsage: spritesheet --out file.png in1.{gif,png} in2.png ...")
 		os.Exit(1)
 	}
 
-	for _, name := range os.Args[1:] {
+	for _, name := range flag.Args() {
 		frames = append(frames, decode(name)...)
 	}
 
@@ -36,10 +36,11 @@ func main() {
 
 	x := 0
 	y := 0
-	for _, frame := range frames {
+	for i, frame := range frames {
 		dp := image.Point{x * w, y * h}
 		fb := frame.Bounds()
-		r := image.Rectangle{dp, dp.Add(fb.Size())}
+
+		r := image.Rectangle{dp.Add(fb.Min), dp.Add(fb.Max)}
 		draw.Draw(canvas, r, frame, fb.Min, draw.Over)
 
 		x++
@@ -81,6 +82,7 @@ func decode(name string) []image.Image {
 		panicerr(err)
 		imgs := make([]image.Image, 0, len(img.Image))
 		for _, sub := range img.Image {
+			fmt.Println("BOUNDZ", sub.Bounds())
 			imgs = append(imgs, sub)
 		}
 		return imgs
