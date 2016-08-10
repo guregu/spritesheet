@@ -36,7 +36,7 @@ func main() {
 
 	x := 0
 	y := 0
-	for i, frame := range frames {
+	for _, frame := range frames {
 		dp := image.Point{x * w, y * h}
 		fb := frame.Bounds()
 
@@ -82,7 +82,6 @@ func decode(name string) []image.Image {
 		panicerr(err)
 		imgs := make([]image.Image, 0, len(img.Image))
 		for _, sub := range img.Image {
-			fmt.Println("BOUNDZ", sub.Bounds())
 			imgs = append(imgs, sub)
 		}
 		return imgs
